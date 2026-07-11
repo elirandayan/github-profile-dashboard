@@ -1,12 +1,10 @@
-// src/service/githubService.js
 const BASE_URL = 'https://api.github.com';
-const CACHE_DURATION_MS = 10 * 60 * 1000; // 10 minutes in milliseconds
+const CACHE_DURATION_MS = 10 * 60 * 1000;
 
 export default async function fetchGitHubProfile(username) {
   const cacheKey = `devpulse_${username.toLowerCase()}`;
   const cachedData = localStorage.getItem(cacheKey);
 
-  // 1. Check if valid data is sitting in local cache
   if (cachedData) {
     try {
       const { data, timestamp } = JSON.parse(cachedData);
@@ -17,12 +15,10 @@ export default async function fetchGitHubProfile(username) {
         return data;
       }
     } catch (e) {
-      // If JSON parsing fails for any reason, clear it out silently and fall through to fetch
       localStorage.removeItem(cacheKey);
     }
   }
 
-  // 2. Cache miss or expired entry -> Proceed with API request
   console.log(`%c[Cache Miss] Fetching live data for ${username}`, 'color: #ff9500; font-weight: bold;');
   
   const [profileRes, repoRes] = await Promise.all([
@@ -35,21 +31,27 @@ export default async function fetchGitHubProfile(username) {
   }
 
   if (!profileRes.ok || !repoRes.ok) {
-    throw new Error(`Failed to fetch profile or repositories from GitHub.`);
+    const failedRes = !profileRes.ok ? profileRes : repoRes;
+    if (failedRes.status === 403) {
+      const resetTime = failedRes.headers.get('x-ratelimit-reset');
+      if (resetTime) {
+        const minutesLeft = Math.ceil((new Date(resetTime * 1000) - Date.now()) / 60000);
+        throw new Error(`GitHub Rate limit reached. Try again in ${minutesLeft} minutes or use cache.`);
+      }
+    }
+    throw new Error(`Failed to fetch data from GitHub.`);
   }
 
   const profile = await profileRes.json();
   const repos = await repoRes.json();
   const payload = { profile, repos };
 
-  // 3. Store the successful payload with a fresh timestamp
   try {
     localStorage.setItem(cacheKey, JSON.stringify({
       data: payload,
       timestamp: Date.now()
     }));
   } catch (err) {
-    // Graceful handling if localStorage is full (Quotas exceeded)
     console.warn("Storage quota full; failed to save item to localStorage.");
   }
 

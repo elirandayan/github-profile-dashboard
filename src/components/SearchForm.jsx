@@ -1,4 +1,3 @@
-// src/components/SearchForm.jsx
 import React, { useState } from 'react';
 
 export default function SearchForm({ onSearch, loading }) {

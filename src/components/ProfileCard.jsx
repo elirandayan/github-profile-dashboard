@@ -1,4 +1,3 @@
-// src/components/ProfileCard.jsx
 import React from 'react';
 
 export default function ProfileCard({ profile, onRefresh }) {
@@ -23,7 +22,7 @@ export default function ProfileCard({ profile, onRefresh }) {
       </div>
 
       <p className="profile-bio text-fallback">
-        {profile.bio ? profile.bio : "This developer hasn't added a bio yet."}
+        {profile.bio ? profile.bio : "✨ This developer hasn't added a bio yet."}
       </p>
 
       <div className="profile-stats-grid">
@@ -43,14 +42,14 @@ export default function ProfileCard({ profile, onRefresh }) {
 
       <ul className="profile-meta">
         <li>
-          <strong>Company:</strong> {profile.company || <span className="text-fallback">Not listed</span>}
+          <strong>🏢 Company:</strong> {profile.company || <span className="text-fallback">Not listed</span>}
         </li>
         <li>
-          <strong>Location:</strong> {profile.location || <span className="text-fallback">Remote / Unknown</span>}
+          <strong>📍 Location:</strong> {profile.location || <span className="text-fallback">Remote / Unknown</span>}
         </li>
         {profile.blog && (
           <li>
-            <strong>Website:</strong>{' '}
+            <strong>🔗 Website:</strong>{' '}
             <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
               {profile.blog}
             </a>

@@ -72,6 +72,7 @@ export default function App() {
         history={history} 
         onPillClick={(uname) => handleSearch(uname, false)} 
         onClear={clearHistory} 
+        loading={loading}
       />
 
       <main className="placeholder-card">
