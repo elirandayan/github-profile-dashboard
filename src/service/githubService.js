@@ -1,9 +1,9 @@
-const BASE_URL = 'https://api.github.com/';
+const BASE_URL = 'https://api.github.com';
 
 export default async function fetchGithubProfile(username){
   const [profileRes, repoRes] = await Promise.all([
     fetch(`${BASE_URL}/users/${username}`),
-    fetch(`${BASE_URL}/users/${username}/repos/per_page=100&sort=updated`),
+    fetch(`${BASE_URL}/users/${username}/repos?per_page=100&sort=updated`),
   ])
 
   if(profileRes.status === 404)
@@ -14,6 +14,9 @@ export default async function fetchGithubProfile(username){
 
   const profile = await profileRes.json();
   const repos = await repoRes.json();
+
+  console.log('profile', profile)
+  console.log('repos', repos)
 
   return { profile, repos };
 }

@@ -1,12 +1,14 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import fetchGitHubProfile from './service/githubService';
+import fetchGithubProfile from './service/githubService.js';
 
 export default function App() {
   const [username, setUsername] = useState('elirandayan');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+
+  console.log(fetchGithubProfile);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -22,9 +24,9 @@ export default function App() {
       setData(result);
       console.log('result', result)
     } catch(err) {
-      setError(err.message || 'something went wrong');
+      setError('ERROR: ' + err.message || 'something went wrong');
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
 
   }
@@ -60,7 +62,18 @@ export default function App() {
       </form>
 
       <main className="placeholder-card">
-        No developer profile searched yet. Enter a username above to start the diagnosis.
+        { error && ( <div>{ error }</div> )}
+        { loading && ( <div>Loading..</div> )}
+        { data && !loading && (
+          <div>
+            <h3>Connected to GitHub!</h3>
+            <p><strong>User: { data.profile.name || data.profile.length }</strong></p>
+            <p><strong>Repos: { data.repos.length }</strong></p>
+          </div>
+        )}
+        { !data && !error && !loading && (
+          <p>No profile searched yet!</p>
+        )}
       </main>
 
     </div>
