@@ -64,6 +64,7 @@ export default function App() {
       <main className="placeholder-card">
         { error && ( <div>{ error }</div> )}
         { loading && ( <div>Loading..</div> )}
+          {/* card for user ID */}
         { data && !loading && (
           <div className='profile-card'>
             <div className='profile-header'>
@@ -84,6 +85,27 @@ export default function App() {
                 >
                   @{data.profile.login}
                 </a>
+              </div>
+            </div>
+
+          {/* biography, with fallback if not provided */}
+            {data.profile.bio && (
+              <p className='prfile-bio'>{data.profile.bio}</p>
+            ) || <i>No biography provided.</i>}
+
+          {/* profile stats: public repos, followers, and following count */}
+            <div className='profile-stats-grid'>
+              <div className='stat-item'>
+                <span className='stat-value'>{data.profile.public_repos}</span>
+                <span className='stat-label'>Repositories</span>
+              </div>
+              <div className='stat-item'>
+                <span className='stat-value'>{data.profile.followers}</span>
+                <span className='stat-label'>Followers</span>
+              </div>
+              <div className='stat-item'>
+                <span className='stat-value'>{data.profile.following}</span>
+                <span className='stat-label'>Following</span>
               </div>
             </div>
           </div>
