@@ -2,3 +2,6 @@ CSS:
   fix issue when the username is very long and not found; the text overflows out
   of the container.  example:
     ERROR: Username "vetqzkjsdlfkdsjflksjdlfdsjkfjdslkjslkdjsalkdjaslkjdalskdjaslkjdalskjdalkjdlak" not found on GitHub!
+
+React:
+  find out if components are being re-rendered redundantly.
