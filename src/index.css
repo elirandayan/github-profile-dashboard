@@ -344,6 +344,7 @@ header p {
   border-radius: 6px;
   margin: 10px 0;
   font-size: 0.9rem;
+  max-width: 960px;
 }
 
 .text-fallback {

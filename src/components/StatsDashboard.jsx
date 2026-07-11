@@ -1,4 +1,3 @@
-// src/components/StatsDashboard.jsx
 import React from 'react';
 
 export default function StatsDashboard({ repos }) {
@@ -6,7 +5,6 @@ export default function StatsDashboard({ repos }) {
     return <p className="no-stats">No repository data available to analyze.</p>;
   }
 
-  // 1. Calculate Aggregates
   let totalStars = 0;
   let totalForks = 0;
   let originalReposCount = 0;
@@ -15,22 +13,16 @@ export default function StatsDashboard({ repos }) {
   repos.forEach((repo) => {
     totalStars += repo.stargazers_count || 0;
     totalForks += repo.forks_count || 0;
-    
-    if (!repo.fork) {
-      originalReposCount++;
-    }
-
+    if (!repo.fork) originalReposCount++;
     if (repo.language) {
       languageCounts[repo.language] = (languageCounts[repo.language] || 0) + 1;
     }
   });
 
-  // 2. Determine Top Languages
   const topLanguages = Object.entries(languageCounts)
-    .sort((a, b) => b[1] - a[1]) // Sort descending by frequency
-    .slice(0, 3); // Get top 3
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
 
-  // 3. Calculate Original vs Fork Ratio
   const originalPercentage = repos.length > 0 
     ? Math.round((originalReposCount / repos.length) * 100) 
     : 0;
@@ -39,13 +31,12 @@ export default function StatsDashboard({ repos }) {
     <div className="stats-dashboard">
       <h3 className="dashboard-title">Developer DNA Pulse</h3>
 
-      {/* Aggregate Stats Row */}
       <div className="stats-row">
         <div className="stat-box">
           <span className="stat-emoji">⭐</span>
           <div>
             <span className="stat-num">{totalStars}</span>
-            <span className="stat-desc">Total Stars Recieved</span>
+            <span className="stat-desc">Total Stars Received</span>
           </div>
         </div>
         <div className="stat-box">
@@ -57,7 +48,6 @@ export default function StatsDashboard({ repos }) {
         </div>
       </div>
 
-      {/* Language Breakdown */}
       <div className="dashboard-section">
         <h4>Top Languages</h4>
         {topLanguages.length > 0 ? (
@@ -74,17 +64,13 @@ export default function StatsDashboard({ repos }) {
         )}
       </div>
 
-      {/* Project Variety Meter */}
       <div className="dashboard-section">
         <div className="variety-header">
           <h4>Project Style</h4>
           <span className="subtext">{originalPercentage}% Original Creations</span>
         </div>
         <div className="progress-bar-bg">
-          <div 
-            className="progress-bar-fill" 
-            style={{ width: `${originalPercentage}%` }}
-          />
+          <div className="progress-bar-fill" style={{ width: `${originalPercentage}%` }} />
         </div>
       </div>
     </div>
