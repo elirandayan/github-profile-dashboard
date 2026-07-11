@@ -1,6 +1,6 @@
 const BASE_URL = 'https://api.github.com/';
 
-export async function fetchGithubProfile(username){
+export default async function fetchGithubProfile(username){
   const [profileRes, repoRes] = await Promise.all([
     fetch(`${BASE_URL}/users/${username}`),
     fetch(`${BASE_URL}/users/${username}/repos/per_page=100&sort=updated`),

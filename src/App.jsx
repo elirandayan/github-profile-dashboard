@@ -1,14 +1,32 @@
 // src/App.jsx
 import React, { useState } from 'react';
+import fetchGitHubProfile from './service/githubService';
 
 export default function App() {
   const [username, setUsername] = useState('elirandayan');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
     if(!username.trim())
       return;
-    alert(`searching for user ${username.trim()} (placeholder logic)`)
+
+    setLoading(true);
+    setError(null);
+    setData(null);
+
+    try {
+      const result = await fetchGithubProfile(username.trim());
+      setData(result);
+      console.log('result', result)
+    } catch(err) {
+      setError(err.message || 'something went wrong');
+    } finally {
+      setLoading(true);
+    }
+
   }
 
   return (
@@ -30,12 +48,14 @@ export default function App() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="search-input"
+          disabled={loading}
         />
         <button
           type="submit"
           className="search-btn"
+          disabled={loading}
         >
-          Inspect
+          { loading ? 'Loading' : 'Inspect' }
         </button>
       </form>
 
