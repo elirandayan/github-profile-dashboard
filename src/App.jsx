@@ -37,7 +37,7 @@ export default function App() {
       {/* Header */}
       <header className="">
         <h1 className="">
-          DevPulse Inspector
+          GitHub Inspector
         </h1>
         <p className="">Uncover a GitHub developer's DNA, habits, and stats.</p>
       </header>
@@ -65,10 +65,27 @@ export default function App() {
         { error && ( <div>{ error }</div> )}
         { loading && ( <div>Loading..</div> )}
         { data && !loading && (
-          <div>
-            <h3>Connected to GitHub!</h3>
-            <p><strong>User: { data.profile.name || data.profile.length }</strong></p>
-            <p><strong>Repos: { data.repos.length }</strong></p>
+          <div className='profile-card'>
+            <div className='profile-header'>
+              <img
+                src={data.profile.avatar_url}
+                alt={`${data.profile.login}'s avatar'`}
+                className='profile-avatar'
+              />
+              <div className='profile-titles'>
+                <h2>
+                  {data.profile.name || data.profile.login}
+                </h2>
+                <a
+                  href={data.profile.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className='profile-link'
+                >
+                  @{data.profile.login}
+                </a>
+              </div>
+            </div>
           </div>
         )}
         { !data && !error && !loading && (
