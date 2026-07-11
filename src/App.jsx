@@ -1,120 +1,50 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import fetchGithubProfile from './service/githubService.js';
+import fetchGitHubProfile from './service/githubService.js';
+import SearchForm from './components/SearchForm';
+import ProfileCard from './components/ProfileCard';
 
 export default function App() {
-  const [username, setUsername] = useState('elirandayan');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
 
-  console.log(fetchGithubProfile);
-
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if(!username.trim())
-      return;
-
+  const handleSearch = async (username) => {
     setLoading(true);
     setError(null);
     setData(null);
 
     try {
-      const result = await fetchGithubProfile(username.trim());
+      const result = await fetchGitHubProfile(username); 
       setData(result);
-      console.log('result', result)
-    } catch(err) {
-      setError('ERROR: ' + err.message || 'something went wrong');
+    } catch (err) {
+      setError('ERROR: ' + (err.message || 'something went wrong'));
     } finally {
-      setLoading(false);
+      setLoading(false); 
     }
-
-  }
+  };
 
   return (
     <div className="app-container">
-      
-      {/* Header */}
-      <header className="">
-        <h1 className="">
-          GitHub Inspector
-        </h1>
-        <p className="">Uncover a GitHub developer's DNA, habits, and stats.</p>
+      <header>
+        <h1>DevPulse Inspector</h1>
+        <p>Uncover a GitHub developer's DNA, habits, and stats.</p>
       </header>
 
-      {/* Search Input Bar */}
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          placeholder="Enter GitHub username (e.g., gaearon)..."
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="search-input"
-          disabled={loading}
-        />
-        <button
-          type="submit"
-          className="search-btn"
-          disabled={loading}
-        >
-          { loading ? 'Loading' : 'Inspect' }
-        </button>
-      </form>
+      {/* Extracted Form Component */}
+      <SearchForm onSearch={handleSearch} loading={loading} />
 
       <main className="placeholder-card">
-        { error && ( <div>{ error }</div> )}
-        { loading && ( <div>Loading..</div> )}
-          {/* card for user ID */}
-        { data && !loading && (
-          <div className='profile-card'>
-            <div className='profile-header'>
-              <img
-                src={data.profile.avatar_url}
-                alt={`${data.profile.login}'s avatar'`}
-                className='profile-avatar'
-              />
-              <div className='profile-titles'>
-                <h2>
-                  {data.profile.name || data.profile.login}
-                </h2>
-                <a
-                  href={data.profile.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className='profile-link'
-                >
-                  @{data.profile.login}
-                </a>
-              </div>
-            </div>
-
-          {/* biography, with fallback if not provided */}
-            {data.profile.bio && (
-              <p className='prfile-bio'>{data.profile.bio}</p>
-            ) || <i>No biography provided.</i>}
-
-          {/* profile stats: public repos, followers, and following count */}
-            <div className='profile-stats-grid'>
-              <div className='stat-item'>
-                <span className='stat-value'>{data.profile.public_repos}</span>
-                <span className='stat-label'>Repositories</span>
-              </div>
-              <div className='stat-item'>
-                <span className='stat-value'>{data.profile.followers}</span>
-                <span className='stat-label'>Followers</span>
-              </div>
-              <div className='stat-item'>
-                <span className='stat-value'>{data.profile.following}</span>
-                <span className='stat-label'>Following</span>
-              </div>
-            </div>
-          </div>
-        )}
-        { !data && !error && !loading && (
+        {error && <div>{error}</div>}
+        {loading && <div>Loading data...</div>}
+        
+        {/* Extracted Profile Card Component */}
+        {data && !loading && <ProfileCard profile={data.profile} />}
+        
+        {!data && !error && !loading && (
           <p>No profile searched yet!</p>
         )}
       </main>
-
     </div>
   );
 }
