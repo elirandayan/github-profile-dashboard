@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import fetchGitHubProfile from './service/githubService.js';
 import SearchForm from './components/SearchForm';
 import ProfileCard from './components/ProfileCard';
+import StatsDashboard from './components/StatsDashboard.jsx';
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,12 @@ export default function App() {
         {loading && <div>Loading data...</div>}
         
         {/* Extracted Profile Card Component */}
-        {data && !loading && <ProfileCard profile={data.profile} />}
+        {data && !loading && (
+          <div>
+            <ProfileCard profile={data.profile} />
+            <StatsDashboard repos={data.repos} />
+          </div>
+        )}
         
         {!data && !error && !loading && (
           <p>No profile searched yet!</p>
