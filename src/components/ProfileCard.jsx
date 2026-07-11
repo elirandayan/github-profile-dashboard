@@ -1,7 +1,7 @@
 // src/components/ProfileCard.jsx
 import React from 'react';
 
-export default function ProfileCard({ profile }) {
+export default function ProfileCard({ profile, onRefresh }) {
   const websiteUrl = profile.blog && !profile.blog.startsWith('http') 
     ? `https://${profile.blog}` 
     : profile.blog;
@@ -22,7 +22,9 @@ export default function ProfileCard({ profile }) {
         </div>
       </div>
 
-      {profile.bio && <p className="profile-bio">{profile.bio}</p>}
+      <p className="profile-bio text-fallback">
+        {profile.bio ? profile.bio : "This developer hasn't added a bio yet."}
+      </p>
 
       <div className="profile-stats-grid">
         <div className="stat-item">
@@ -40,17 +42,28 @@ export default function ProfileCard({ profile }) {
       </div>
 
       <ul className="profile-meta">
-        {profile.company && <li><strong>🏢 Company:</strong> {profile.company}</li>}
-        {profile.location && <li><strong>📍 Location:</strong> {profile.location}</li>}
+        <li>
+          <strong>Company:</strong> {profile.company || <span className="text-fallback">Not listed</span>}
+        </li>
+        <li>
+          <strong>Location:</strong> {profile.location || <span className="text-fallback">Remote / Unknown</span>}
+        </li>
         {profile.blog && (
           <li>
-            <strong>🔗 Website:</strong>{' '}
+            <strong>Website:</strong>{' '}
             <a href={websiteUrl} target="_blank" rel="noopener noreferrer">
               {profile.blog}
             </a>
           </li>
         )}
       </ul>
+
+      <button 
+        className="refresh-btn" 
+        onClick={() => onRefresh(profile.login, true)}
+      >
+        🔄 Sync Live Data
+      </button>
     </div>
   );
 }

@@ -24,7 +24,7 @@ export default async function fetchGitHubProfile(username) {
 
   // 2. Cache miss or expired entry -> Proceed with API request
   console.log(`%c[Cache Miss] Fetching live data for ${username}`, 'color: #ff9500; font-weight: bold;');
-
+  
   const [profileRes, repoRes] = await Promise.all([
     fetch(`${BASE_URL}/users/${username}`),
     fetch(`${BASE_URL}/users/${username}/repos?per_page=100&sort=updated`)

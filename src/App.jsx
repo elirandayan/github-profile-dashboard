@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import fetchGitHubProfile from './service/githubService.js';
 import SearchForm from './components/SearchForm';
@@ -20,23 +19,37 @@ export default function App() {
     localStorage.setItem('devpulse_search_history', JSON.stringify(history));
   }, [history]);
 
-  const handleSearch = async (username) => {
+  const handleSearch = async (username, forceRefresh = false) => {
+    const cleanedUsername = username.trim().toLowerCase();
+    const sanitizedUsername = cleanedUsername
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-_]/g, '');
+
+    if(sanitizedUsername !== cleanedUsername){
+      setError('Invalid characters in username. Use only alphanumeric characters, underscores, or hyphens.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
-    setData(null);
+    
+    if (forceRefresh) setData(null); 
 
     try {
-      const result = await fetchGitHubProfile(username); 
+      if (forceRefresh) {
+        localStorage.removeItem(`devpulse_${sanitizedUsername}`);
+      }
+      
+      const result = await fetchGitHubProfile(sanitizedUsername); 
       setData(result);
 
       setHistory((prevHistory) => {
-        const cleanedUsername = username.toLowerCase();
-        const filtered = prevHistory.filter((u) => u !== cleanedUsername);
-        return [cleanedUsername, ...filtered].slice(0, 5);
+        const filtered = prevHistory.filter((u) => u !== sanitizedUsername);
+        return [sanitizedUsername, ...filtered].slice(0, 5);
       });
-
     } catch (err) {
-      setError('ERROR: ' + (err.message || 'something went wrong'));
+      setError('ERROR: ' + (err.message || 'Something went wrong'));
     } finally {
       setLoading(false); 
     }
@@ -53,22 +66,21 @@ export default function App() {
         <p>Uncover a GitHub developer's DNA, habits, and stats.</p>
       </header>
 
-      <SearchForm onSearch={handleSearch} loading={loading} />
+      <SearchForm onSearch={(uname) => handleSearch(uname, false)} loading={loading} />
 
-      {/* Insert History Component right under the Form */}
       <SearchHistory 
         history={history} 
-        onPillClick={handleSearch} 
+        onPillClick={(uname) => handleSearch(uname, false)} 
         onClear={clearHistory} 
       />
 
       <main className="placeholder-card">
         {error && <div className="error-msg">{error}</div>}
-        {loading && <div className="loading-msg">Loading data...</div>}
+        {loading && <div className="loading-msg">Inspecting GitHub DNA...</div>}
         
         {data && !loading && (
           <div className="inspector-results">
-            <ProfileCard profile={data.profile} />
+            <ProfileCard profile={data.profile} onRefresh={handleSearch} />
             <StatsDashboard repos={data.repos} />
           </div>
         )}
